@@ -96,35 +96,69 @@ hydra -l testuser -P /usr/share/wordlists/rockyou.txt mysql://192.168.64.5 -t 4 
 
 ## SIEM Log Analyzer
 
-A Python-based tool that parses authentication logs and detects brute-force attacks.
+A Python-based tool that parses authentication and web logs to detect attacks in real-time.
 
 ### Features
 
 - Parses `/var/log/auth.log` for failed SSH login attempts
-- Detects brute-force attacks based on configurable threshold
+- Parses `/var/log/apache2/access.log` for web scanning activity
+- Detects brute-force attacks and web scans based on configurable thresholds
+- **Real-time monitoring mode** — watches logs continuously and alerts instantly
 - Generates formatted security reports
 - Exports alerts to CSV for evidence collection
 
 ### Usage
 
+**One-time scan:**
+
 ```bash
 sudo python3 log_analyzer.py
 ```
 
-### Sample Output
+**Real-time monitoring:**
+
+```bash
+sudo python3 log_analyzer.py --watch
+```
+
+### Sample Output (One-Time Scan)
 
 ```
 [SUMMARY]
-  Total unique IPs with failures: 1
-  Total failed login attempts: 8
-  Alerts generated: 1
+  SSH: 1 IPs, 8 failed attempts
+  Web: 1 IPs, 6282 requests
+  Alerts generated: 2
 
-[ALERTS] - Potential Brute-Force Attacks
-  ⚠️  ALERT: 192.168.64.6
-      Failed attempts: 8
+[ALERTS]
+  ⚠️  Web Scan: 192.168.64.6
+      Count: 6282
+      Suspicious paths: 1241
+
+  ⚠️  SSH Brute-Force: 192.168.64.6
+      Count: 8
       Users targeted: kkesslero
-      First seen: 2025-12-20T04:11:31
-      Last seen: 2025-12-20T04:11:34
+```
+
+### Sample Output (Real-Time Mode)
+
+```
+[*] Starting real-time monitoring...
+[*] Press Ctrl+C to stop
+
+[SSH] Failed login from 192.168.64.6 (user: kkesslero) - Total: 1
+[SSH] Failed login from 192.168.64.6 (user: kkesslero) - Total: 2
+[SSH] Failed login from 192.168.64.6 (user: kkesslero) - Total: 3
+[SSH] Failed login from 192.168.64.6 (user: kkesslero) - Total: 4
+[SSH] Failed login from 192.168.64.6 (user: kkesslero) - Total: 5
+
+============================================================
+⚠️  REAL-TIME ALERT - 2026-01-13 22:18:45
+============================================================
+  Type: SSH Brute-Force
+  IP: 192.168.64.6
+  Count: 5
+  Users targeted: kkesslero
+============================================================
 ```
 
 ## Log Analysis Commands
@@ -160,6 +194,7 @@ sudo fail2ban-client set sshd unbanip <IP_ADDRESS>
 - **nikto** scan revealed missing security headers (X-Frame-Options) and server version disclosure
 - **MySQL** connection attempts logged in error.log with source IP
 - **SIEM analyzer** correctly identified attack patterns and generated actionable alerts
+- **Real-time monitoring** detected brute-force attacks as they happened and triggered instant alerts
 
 ## Skills Demonstrated
 
@@ -169,15 +204,17 @@ sudo fail2ban-client set sshd unbanip <IP_ADDRESS>
 - Log analysis and monitoring
 - Intrusion detection and prevention
 - Python scripting for security automation
+- Real-time event processing
 
 ## Future Enhancements
 
 - [x] Build SIEM-style log analysis tool in Python
-- [ ] Add Apache log parsing for web attack detection
-- [ ] Add real-time monitoring mode
+- [x] Add Apache log parsing for web attack detection
+- [x] Add real-time monitoring mode
 - [ ] Configure fail2ban for FTP and MySQL
 - [ ] Add network traffic capture (tcpdump/Wireshark)
 - [ ] Set up centralized logging
+- [ ] Add email/Slack alerting
 
 ## Resources
 
