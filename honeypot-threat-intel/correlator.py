@@ -1,15 +1,5 @@
 #!/usr/bin/env python3
-"""
-Threat Intelligence Correlator
-Reads Cowrie honeypot logs, enriches attacker IPs with threat intel,
-and generates a comprehensive threat report.
 
-HOW IT WORKS:
-1. Parses Cowrie's JSON log file line by line
-2. Groups all activity by attacker IP address
-3. Queries AbuseIPDB for reputation data on each IP
-4. Generates a report with attacker profiles and credential statistics
-"""
 
 import json
 import os
@@ -23,17 +13,14 @@ from datetime import datetime
 # CONFIGURATION
 # ──────────────────────────────────────────────
 
-# Path to Cowrie's JSON log file — this is where Cowrie writes
-# one JSON object per line for every event it captures
+# Path to Cowrie's JSON log file
 COWRIE_LOG = "/home/cowrie/cowrie/var/log/cowrie/cowrie.json"
 
-# Where to save our generated report
+# Where to save generated report
 REPORT_FILE = "threat_report.json"
 
-# AbuseIPDB API key — sign up free at https://www.abuseipdb.com
-# The free tier gives you 1000 lookups per day, which is plenty
-# Leave empty string to skip threat intel enrichment
-ABUSEIPDB_API_KEY = "0410d2699f87776ca767fe758548365f9cd033d80535d07dcbb7b9ba11d189966a2931f7a4e7ca0b"
+
+ABUSEIPDB_API_KEY = ""
 
 
 # ──────────────────────────────────────────────
@@ -42,18 +29,11 @@ ABUSEIPDB_API_KEY = "0410d2699f87776ca767fe758548365f9cd033d80535d07dcbb7b9ba11d
 
 def parse_cowrie_logs(log_path):
     """
-    Read Cowrie's JSON log and extract attacker activity.
-    
-    Cowrie logs events in JSONL format (one JSON object per line).
-    Each event has an 'eventid' that tells us what happened:
       - cowrie.session.connect    → someone connected to the honeypot
       - cowrie.login.success      → a login attempt that Cowrie accepted
       - cowrie.login.failed       → a login attempt that Cowrie rejected
       - cowrie.command.input      → a command the attacker typed
       - cowrie.session.file_download → attacker tried to download a file
-    
-    We group everything by source IP so we can build a profile
-    of each attacker's behavior.
     """
     # defaultdict creates a new attacker profile automatically
     # the first time we see a new IP address
@@ -100,8 +80,6 @@ def parse_cowrie_logs(log_path):
 
             # ── Login attempts ──
             # These tell us what credentials attackers are trying.
-            # In the real world, the most-tried passwords reveal
-            # what's in current botnet credential lists.
             if event_id in ("cowrie.login.success", "cowrie.login.failed"):
                 attackers[src_ip]["login_attempts"].append({
                     "username": entry.get("username", ""),
@@ -112,8 +90,6 @@ def parse_cowrie_logs(log_path):
 
             # ── Commands executed ──
             # After "logging in", what does the attacker do?
-            # Common patterns: check the system (uname, id),
-            # download malware (wget, curl), set up persistence (crontab)
             if event_id == "cowrie.command.input":
                 attackers[src_ip]["commands"].append({
                     "input": entry.get("input", ""),
@@ -122,8 +98,7 @@ def parse_cowrie_logs(log_path):
 
             # ── File downloads ──
             # If an attacker tries to wget/curl a file, Cowrie logs
-            # the URL. These URLs are valuable IOCs (Indicators of
-            # Compromise) that can be shared with the security community.
+            # the URL.
             if event_id == "cowrie.session.file_download":
                 attackers[src_ip]["downloaded_files"].append({
                     "url": entry.get("url", ""),
@@ -132,15 +107,12 @@ def parse_cowrie_logs(log_path):
                 })
 
             # ── Session tracking ──
-            # Each new connection is a session. Multiple sessions from
-            # one IP might mean an automated bot cycling through credentials.
+            # Each new connection is a session.
             if event_id == "cowrie.session.connect":
                 attackers[src_ip]["sessions"] += 1
 
             # ── Client fingerprinting ──
             # The SSH client version string can identify attack tools.
-            # For example, "libssh" often indicates an automated scanner,
-            # while "PuTTY" might be a human attacker.
             if event_id == "cowrie.client.version":
                 version = entry.get("version", "")
                 if version:
@@ -155,20 +127,6 @@ def parse_cowrie_logs(log_path):
 # ──────────────────────────────────────────────
 
 def check_abuseipdb(ip):
-    """
-    Query AbuseIPDB for reputation data on an IP address.
-    
-    AbuseIPDB is a community-driven database where security professionals
-    report malicious IPs. The API returns:
-      - abuseConfidenceScore (0-100): how likely this IP is malicious
-      - countryCode: where the IP is geolocated
-      - isp: the internet service provider
-      - totalReports: how many times it's been reported
-      - usageType: what the IP is used for (datacenter, residential, etc.)
-    
-    In a real SOC, you'd check every suspicious IP against databases
-    like this, plus VirusTotal, Shodan, and internal threat feeds.
-    """
     if not ABUSEIPDB_API_KEY:
         return {"note": "No API key configured — skipping enrichment"}
 
@@ -197,16 +155,7 @@ def check_abuseipdb(ip):
 # ──────────────────────────────────────────────
 
 def generate_report(attackers):
-    """
-    Combine parsed honeypot data with threat intel into a single report.
-    
-    This is the analysis phase — we're not just collecting data anymore,
-    we're producing actionable intelligence:
-      - Which credentials are being targeted most?
-      - Which IPs are most aggressive?
-      - Are these known bad actors?
-      - What are they trying to do after getting in?
-    """
+  
     report = {
         "generated_at": datetime.now().isoformat(),
         "summary": {
@@ -228,9 +177,7 @@ def generate_report(attackers):
 
     # ── Credential analysis ──
     # Aggregating all attempted usernames and passwords tells us
-    # what's currently in botnet wordlists. This data is valuable
-    # for hardening real systems — if "admin/admin123" is tried
-    # 10,000 times, any system using those creds is at risk.
+    # what's currently in botnet wordlists.
     all_usernames = Counter()
     all_passwords = Counter()
     for data in attackers.values():
