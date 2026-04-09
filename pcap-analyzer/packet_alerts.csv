@@ -1,0 +1,6 @@
+Type,Source IP,Details
+Port Scan,192.168.64.5,Scanned 23 ports
+Brute-Force,192.168.64.1,Port 22: 155 connections
+Brute-Force,192.168.64.6,Port 21: 8 connections
+Brute-Force,192.168.64.6,Port 3306: 9 connections
+Brute-Force,192.168.64.6,Port 22: 133 connections
